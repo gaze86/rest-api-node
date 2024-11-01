@@ -1,9 +1,9 @@
-import express from "express";
-import crypto from "node:crypto";
-import cors from "cors";
+const express = require("express");
+const crypto = require("node:crypto");
+const cors = require("cors");
 
-import movies from "./movies.json" assert { type: "json" };
-import moviesSchema from "./schemas/movies.js";
+const movies = require( "./movies.json");
+const {validateMovie, validatePartialMovie} = require("./schemas/movies.js");
 
 
 const app = express();
@@ -57,7 +57,7 @@ app.get("/movies/:id", (req, res) => {
 });
 
 app.post("/movies", (req, res) => {
-  const result = moviesSchema.validateMovie(req.body);
+  const result = validateMovie(req.body);
   if (result.error)
     return res.status(400).json({ error: JSON.parse(result.error.message) });
 
@@ -75,7 +75,7 @@ app.post("/movies", (req, res) => {
 app.patch("/movies/:id", (req, res) => {
 
   // Validate body
-  const result = moviesSchema.validatePartialMovie(req.body);
+  const result = validatePartialMovie(req.body);
   if(!result.success) {
     return res.status(400).json( {error: JSON.parse(result.error.message)} )
   }
